@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+	xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+ ../xsd/spring-beans.xsd
+http://www.springframework.org/schema/security 
+ ../xsd/spring-security.xsd">
+	<!-- use "security" as the default namespace rather than "beans", which 
+		means we can omit the prefix on all the security namespace elements, making 
+		the content easier to read. -->
+
+	<!-- The <http> element is responsible for creating a FilterChainProxy and 
+		the filter beans which it uses -->
+		
+<!-- 		<beans:bean autowire-candidate="default" autowire="default"> -->
+<!-- 			<beans:property name=""></beans:property> -->
+<!-- 		</beans:bean> -->
+
+	<http>
+		<intercept-url pattern="/" access="hasRole('USER')" />
+		<intercept-url pattern="/index" access="hasRole('USER')" />
+		<form-login  always-use-default-target="true" default-target-url="/index"/>
+		<logout />
+	</http>
+	
+	<debug/>
+	<!-- Provides method security for all beans registered in the Spring application context. Specifically, beans 
+ will be scanned for matches with the ordered list of "protect-pointcut" sub-elements, Spring Security 
+ annotations and/or. Where there is a match, the beans will automatically be proxied and security 
+ authorization applied to the methods accordingly. -->
+	<global-method-security secured-annotations="enabled" pre-post-annotations="enabled">
+	</global-method-security>
+	
+	<!-- The <authentication-provider> element creates a DaoAuthenticationProvider 
+		bean and the <user-service> element creates an InMemoryDaoImpl. All authentication- 
+		provider elements must be children of the <authentication-manager> element, 
+		which creates a ProviderManager and registers the authentication providers 
+		with it. -->
+	<authentication-manager>
+		<authentication-provider>
+			<user-service>
+				<user name="jimi"
+					password="{bcrypt}$2a$10$ddEWZUl8aU0GdZPPpy7wbu82dvEw/pBpbRvDQRqA41y6mK1CoH00m"
+					authorities="ROLE_USER, ROLE_ADMIN" />
+				<user name="bob"
+					password="{bcrypt}$2a$10$/elFpMBnAYYig6KRR5bvOOYeZr1ie1hSogJryg9qDlhza4oCw1Qka"
+					authorities="ROLE_USER" />
+				<!-- Password is prefixed with {noop} to indicate to DelegatingPasswordEncoder 
+					that NoOpPasswordEncoder should be used. This is not safe for production, 
+					but makes reading in samples easier. Normally passwords should be hashed 
+					using BCrypt -->
+				<user name="jimi1" password="{noop}jimispassword"
+					authorities="ROLE_USER, ROLE_ADMIN" />
+				<user name="bob1" password="{noop}bobspassword"
+					authorities="ROLE_USER" />
+			</user-service>
+		</authentication-provider>
+	</authentication-manager>
+	
+</beans:beans>
